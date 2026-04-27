@@ -366,4 +366,17 @@ export default {
   text-align: center;
   padding: 0.5rem;
 }
+
+/* Dark mode */
+[data-theme="dark"] .trend-card { background: #1e293b; border-color: #334155; }
+[data-theme="dark"] .trend-header { border-bottom-color: #334155; }
+[data-theme="dark"] .trend-label { color: #94a3b8; }
+[data-theme="dark"] .trend-count { color: #f1f5f9; }
+[data-theme="dark"] .increasing-card .trend-icon { background: rgba(16,185,129,0.15); color: #34d399; }
+[data-theme="dark"] .stable-card .trend-icon { background: rgba(59,130,246,0.15); color: #60a5fa; }
+[data-theme="dark"] .decreasing-card .trend-icon { background: rgba(239,68,68,0.15); color: #f87171; }
+[data-theme="dark"] .trend-item { background: rgba(255,255,255,0.03); }
+[data-theme="dark"] .trend-item:hover { background: rgba(255,255,255,0.06); }
+[data-theme="dark"] .item-name { color: #cbd5e1; }
+[data-theme="dark"] .more-items { color: #64748b; }
 </style>

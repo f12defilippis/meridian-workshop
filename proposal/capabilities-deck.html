@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meridian Components — Inventory Dashboard Modernization</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --primary: #0f172a;
+    --accent: #3b82f6;
+    --accent-light: #60a5fa;
+    --accent-glow: rgba(59, 130, 246, 0.15);
+    --surface: #ffffff;
+    --surface-alt: #f8fafc;
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --gradient-1: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    --gradient-2: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+    --gradient-3: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0f172a;
+    color: var(--text);
+    overflow: hidden;
+    height: 100%;
+  }
+
+  /* Presentation container */
+  .deck {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    transform: translateX(60px);
+    transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+  }
+
+  .slide.exit-left {
+    opacity: 0;
+    transform: translateX(-60px);
+  }
+
+  /* Backgrounds */
+  .bg-dark {
+    background: var(--gradient-1);
+    color: #ffffff;
+  }
+
+  .bg-white {
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .bg-accent {
+    background: var(--gradient-2);
+    color: #ffffff;
+  }
+
+  .bg-deep {
+    background: var(--gradient-3);
+    color: #ffffff;
+  }
+
+  /* Geometric decorations */
+  .geo-lines {
+    position: absolute;
+    top: 0; right: 0;
+    width: 45%;
+    height: 100%;
+    opacity: 0.06;
+    background:
+      repeating-linear-gradient(45deg, transparent, transparent 40px, currentColor 40px, currentColor 41px),
+      repeating-linear-gradient(-45deg, transparent, transparent 80px, currentColor 80px, currentColor 81px);
+    pointer-events: none;
+  }
+
+  .geo-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid currentColor;
+    opacity: 0.07;
+    pointer-events: none;
+  }
+
+  .geo-dots {
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 30%;
+    height: 40%;
+    opacity: 0.05;
+    background: radial-gradient(circle, currentColor 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+  }
+
+  /* Typography */
+  .slide-number {
+    position: absolute;
+    top: 32px;
+    right: 40px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    opacity: 0.4;
+    text-transform: uppercase;
+  }
+
+  .logo-mark {
+    position: absolute;
+    top: 32px;
+    left: 40px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+
+  h1 {
+    font-size: 3.8rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+
+  h1 .accent { color: var(--accent-light); }
+  .bg-white h1 .accent { color: var(--accent); }
+
+  h2 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+    opacity: 0.6;
+  }
+
+  .subtitle {
+    font-size: 1.35rem;
+    font-weight: 300;
+    line-height: 1.6;
+    max-width: 680px;
+    opacity: 0.8;
+  }
+
+  .subtitle strong { font-weight: 600; opacity: 1; }
+
+  /* Content layouts */
+  .content-full {
+    width: 100%;
+    max-width: 1100px;
+    text-align: left;
+  }
+
+  .content-center {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 12px;
+  }
+
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 32px;
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 12px;
+  }
+
+  .four-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 12px;
+  }
+
+  /* Cards */
+  .card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 32px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(255,255,255,0.2);
+  }
+
+  .bg-white .card {
+    background: var(--surface-alt);
+    border-color: var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .bg-white .card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(59,130,246,0.08);
+  }
+
+  .card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+    background: var(--accent-glow);
+  }
+
+  .bg-dark .card-icon,
+  .bg-deep .card-icon {
+    background: rgba(96, 165, 250, 0.15);
+  }
+
+  .card h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+
+  .card p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.75;
+  }
+
+  /* Stat blocks */
+  .stat {
+    text-align: center;
+    padding: 24px;
+  }
+
+  .stat-value {
+    font-size: 3.2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--accent-light);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .bg-white .stat-value { color: var(--accent); }
+
+  .stat-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: 0.6;
+  }
+
+  /* Timeline */
+  .timeline {
+    width: 100%;
+    max-width: 1100px;
+    margin-top: 8px;
+  }
+
+  .timeline-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 24px;
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    align-items: start;
+  }
+
+  .bg-white .timeline-row {
+    border-bottom-color: var(--border);
+  }
+
+  .timeline-row:last-child { border-bottom: none; }
+
+  .timeline-phase {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-light);
+    padding-top: 2px;
+  }
+
+  .bg-white .timeline-phase { color: var(--accent); }
+
+  .timeline-content h4 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .timeline-content p {
+    font-size: 0.9rem;
+    opacity: 0.7;
+    line-height: 1.5;
+  }
+
+  .timeline-bar {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .timeline-bar span {
+    height: 4px;
+    border-radius: 2px;
+    flex: 1;
+    background: rgba(59,130,246,0.3);
+  }
+
+  .timeline-bar span.filled {
+    background: var(--accent-light);
+  }
+
+  /* Requirements tag */
+  .req-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(59,130,246,0.15);
+    color: var(--accent-light);
+    margin-right: 4px;
+    margin-top: 8px;
+  }
+
+  .bg-white .req-tag {
+    color: var(--accent);
+    background: rgba(59,130,246,0.08);
+  }
+
+  /* List style */
+  .check-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 8px;
+  }
+
+  .check-list li {
+    padding: 8px 0;
+    padding-left: 28px;
+    position: relative;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    opacity: 0.85;
+  }
+
+  .check-list li::before {
+    content: ">";
+    position: absolute;
+    left: 0;
+    color: var(--accent-light);
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .bg-white .check-list li::before { color: var(--accent); }
+
+  /* Divider line */
+  .divider {
+    width: 64px;
+    height: 3px;
+    background: var(--accent-light);
+    border-radius: 2px;
+    margin: 20px 0;
+  }
+
+  .bg-white .divider { background: var(--accent); }
+
+  /* Navigation */
+  .nav {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 100;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(12px);
+    padding: 10px 20px;
+    border-radius: 40px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .nav-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: transparent;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .nav-btn:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.4);
+  }
+
+  .nav-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .nav-dot.active {
+    background: var(--accent-light);
+    box-shadow: 0 0 8px rgba(96, 165, 250, 0.5);
+  }
+
+  /* Progress bar */
+  .progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: var(--gradient-2);
+    z-index: 200;
+    transition: width 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Key bindings hint */
+  .keys-hint {
+    position: fixed;
+    bottom: 84px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 1px;
+    z-index: 100;
+  }
+
+  /* Animated entry for card children */
+  .slide.active .card,
+  .slide.active .timeline-row,
+  .slide.active .stat {
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .slide.active .card:nth-child(1),
+  .slide.active .timeline-row:nth-child(1),
+  .slide.active .stat:nth-child(1) { animation-delay: 0.1s; }
+  .slide.active .card:nth-child(2),
+  .slide.active .timeline-row:nth-child(2),
+  .slide.active .stat:nth-child(2) { animation-delay: 0.2s; }
+  .slide.active .card:nth-child(3),
+  .slide.active .timeline-row:nth-child(3),
+  .slide.active .stat:nth-child(3) { animation-delay: 0.3s; }
+  .slide.active .card:nth-child(4),
+  .slide.active .timeline-row:nth-child(4),
+  .slide.active .stat:nth-child(4) { animation-delay: 0.4s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Pulse animation for the accent glow */
+  @keyframes pulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .pulse { animation: pulse 3s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1: Title -->
+  <div class="slide bg-dark active" data-slide="0">
+    <div class="geo-lines"></div>
+    <div class="geo-circle" style="width:500px;height:500px;bottom:-150px;right:-100px;"></div>
+    <div class="content-center">
+      <h3>Proposal for Meridian Components</h3>
+      <h1>Inventory Dashboard<br><span class="accent">Modernization</span></h1>
+      <div class="divider" style="margin:20px auto;"></div>
+      <p class="subtitle">A structured approach to stabilize, extend, and future-proof<br>your operations platform.</p>
+      <p style="margin-top:40px;font-size:0.85rem;opacity:0.4;letter-spacing:1px;">RFP # MC-2026-0417 &mdash; April 2026</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 2: The Challenge -->
+  <div class="slide bg-white" data-slide="1">
+    <div class="geo-dots"></div>
+    <div class="logo-mark">Accenture</div>
+    <div class="slide-number">02 / 12</div>
+    <div class="content-full">
+      <h3>The Challenge</h3>
+      <h2>A solid foundation that needs<br>the right partner to finish.</h2>
+      <div class="divider"></div>
+      <div class="two-col" style="margin-top:24px;">
+        <div>
+          <p class="subtitle" style="font-size:1.05rem;max-width:100%;">
+            Meridian's inventory dashboard serves <strong>180 employees across 3 warehouses</strong> on three continents. The previous vendor delivered a working MVP — but left before the job was done.
+          </p>
+          <ul class="check-list" style="margin-top:20px;">
+            <li>Reports module carries unresolved defects</li>
+            <li>No automated tests — IT has blocked all changes</li>
+            <li>Tokyo team limited to English-only interface</li>
+            <li>No restocking intelligence — decisions made by spreadsheet</li>
+            <li>Documentation too thin for safe maintenance</li>
+          </ul>
+        </div>
+        <div>
+          <div class="card" style="height:100%;display:flex;flex-direction:column;justify-content:center;">
+            <div style="text-align:center;">
+              <div class="stat-value" style="font-size:2.4rem;">8+</div>
+              <div class="stat-label" style="margin-bottom:28px;">Known defects in Reports</div>
+              <div class="stat-value" style="font-size:2.4rem;">0</div>
+              <div class="stat-label" style="margin-bottom:28px;">Automated tests</div>
+              <div class="stat-value" style="font-size:2.4rem;">0</div>
+              <div class="stat-label">Pages of useful architecture docs</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Our Approach -->
+  <div class="slide bg-dark" data-slide="2">
+    <div class="geo-lines"></div>
+    <div class="logo-mark" style="color:#fff;">Accenture</div>
+    <div class="slide-number">03 / 12</div>
+    <div class="content-full">
+      <h3>Our Approach</h3>
+      <h2>Fix. Build. Protect. Document.</h2>
+      <div class="divider"></div>
+      <p class="subtitle" style="margin-bottom:32px;">Four verbs. Four phases. Eight weeks from kickoff to handoff.</p>
+      <div class="four-col">
+        <div class="card" style="text-align:center;">
+          <div class="card-icon" style="margin:0 auto 16px;">&#9881;</div>
+          <h4>Fix</h4>
+          <p>Audit and resolve every Reports defect — filters, i18n, data patterns.</p>
+          <span class="req-tag">R1</span>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-icon" style="margin:0 auto 16px;">&#9878;</div>
+          <h4>Build</h4>
+          <p>Deliver intelligent restocking recommendations your team needs.</p>
+          <span class="req-tag">R2</span>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-icon" style="margin:0 auto 16px;">&#9745;</div>
+          <h4>Protect</h4>
+          <p>End-to-end test coverage so IT can approve changes with confidence.</p>
+          <span class="req-tag">R3</span>
+        </div>
+        <div class="card" style="text-align:center;">
+          <div class="card-icon" style="margin:0 auto 16px;">&#9776;</div>
+          <h4>Document</h4>
+          <p>Architecture overview your IT team can actually use.</p>
+          <span class="req-tag">R4</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: R1 Reports -->
+  <div class="slide bg-white" data-slide="3">
+    <div class="geo-dots"></div>
+    <div class="logo-mark">Accenture</div>
+    <div class="slide-number">04 / 12</div>
+    <div class="content-full">
+      <h3>R1 &mdash; Reports Remediation</h3>
+      <h2>Every defect found. Every defect fixed.<br>Every fix verified.</h2>
+      <div class="divider"></div>
+      <div class="two-col" style="margin-top:24px;">
+        <div>
+          <p class="subtitle" style="font-size:1.05rem;max-width:100%;">
+            We don't rely on a known-issues list. Our comprehensive audit covers the full Reports module — frontend and backend — across five dimensions:
+          </p>
+          <ul class="check-list" style="margin-top:16px;">
+            <li><strong>Filter behavior</strong> — all four filters correctly wired and producing accurate results</li>
+            <li><strong>Internationalization</strong> — no hardcoded strings, proper locale formatting</li>
+            <li><strong>Console errors</strong> — zero runtime warnings or errors</li>
+            <li><strong>API consistency</strong> — endpoints follow uniform conventions</li>
+            <li><strong>Data integrity</strong> — displayed data matches source under all filter states</li>
+          </ul>
+        </div>
+        <div>
+          <div class="card" style="padding:28px;">
+            <h4 style="margin-bottom:16px;color:var(--accent);">Methodology</h4>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <div style="display:flex;align-items:start;gap:12px;">
+                <div style="min-width:28px;height:28px;border-radius:50%;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--accent);">1</div>
+                <div><strong style="font-size:0.9rem;">Discover</strong><br><span style="font-size:0.85rem;opacity:0.7;">Full codebase audit — frontend + backend</span></div>
+              </div>
+              <div style="display:flex;align-items:start;gap:12px;">
+                <div style="min-width:28px;height:28px;border-radius:50%;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--accent);">2</div>
+                <div><strong style="font-size:0.9rem;">Classify</strong><br><span style="font-size:0.85rem;opacity:0.7;">Severity ranking & defect register</span></div>
+              </div>
+              <div style="display:flex;align-items:start;gap:12px;">
+                <div style="min-width:28px;height:28px;border-radius:50%;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--accent);">3</div>
+                <div><strong style="font-size:0.9rem;">Resolve</strong><br><span style="font-size:0.85rem;opacity:0.7;">Fix each defect, verify with automated test</span></div>
+              </div>
+              <div style="display:flex;align-items:start;gap:12px;">
+                <div style="min-width:28px;height:28px;border-radius:50%;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--accent);">4</div>
+                <div><strong style="font-size:0.9rem;">Validate</strong><br><span style="font-size:0.85rem;opacity:0.7;">Regression testing across all views</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: R2 Restocking -->
+  <div class="slide bg-deep" data-slide="4">
+    <div class="geo-lines"></div>
+    <div class="geo-circle" style="width:300px;height:300px;top:-80px;left:-60px;"></div>
+    <div class="logo-mark" style="color:#fff;">Accenture</div>
+    <div class="slide-number">05 / 12</div>
+    <div class="content-full">
+      <h3>R2 &mdash; Restocking Recommendations</h3>
+      <h2>From spreadsheets to<br><span class="accent">intelligent decisions.</span></h2>
+      <div class="divider"></div>
+      <div class="three-col" style="margin-top:28px;">
+        <div class="card">
+          <div class="card-icon">&#9881;</div>
+          <h4>Smart Engine</h4>
+          <p>Deficit-scoring algorithm that compares stock levels against demand forecasts. Items ranked by urgency — highest need first.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#36;</div>
+          <h4>Budget-Aware</h4>
+          <p>Operators set a ceiling, the engine allocates top-down by priority. Real-time budget impact as quantities are adjusted.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#9998;</div>
+          <h4>Operator Control</h4>
+          <p>Recommendations are a starting point. Your team can adjust quantities, filter by warehouse or category, and review before action.</p>
+        </div>
+      </div>
+      <p style="margin-top:32px;font-size:0.95rem;opacity:0.6;text-align:center;">Integrated with existing inventory and demand data — consistent with what your team already sees across the dashboard.</p>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: R3 Testing -->
+  <div class="slide bg-white" data-slide="5">
+    <div class="geo-dots"></div>
+    <div class="logo-mark">Accenture</div>
+    <div class="slide-number">06 / 12</div>
+    <div class="content-full">
+      <h3>R3 &mdash; Automated Testing</h3>
+      <h2>The key that unlocks everything else.</h2>
+      <div class="divider"></div>
+      <p class="subtitle" style="margin-bottom:28px;">Your IT team blocked changes because there was no safety net. We build the safety net first.</p>
+      <div class="two-col">
+        <div>
+          <div class="card">
+            <h4>Playwright E2E Suite</h4>
+            <p style="margin-bottom:12px;">Cross-browser testing framework covering every critical user flow:</p>
+            <ul class="check-list">
+              <li>Dashboard load and data accuracy</li>
+              <li>Inventory browsing and filtering</li>
+              <li>Order tracking and status flows</li>
+              <li>Spending analysis views</li>
+              <li>Reports module (post-fix)</li>
+              <li>Restocking recommendations (new)</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:20px;">
+            <h4>CI-Ready</h4>
+            <p>Tests run headless, produce clear pass/fail output with failure screenshots. Ready to plug into any CI/CD pipeline.</p>
+          </div>
+          <div class="card">
+            <h4>Flow-First Approach</h4>
+            <p>We analyze the full codebase to identify and classify every user flow by operational impact — then prioritize coverage accordingly. No guesswork.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: Desired Items -->
+  <div class="slide bg-dark" data-slide="6">
+    <div class="geo-lines"></div>
+    <div class="logo-mark" style="color:#fff;">Accenture</div>
+    <div class="slide-number">07 / 12</div>
+    <div class="content-full">
+      <h3>Beyond Requirements</h3>
+      <h2>The <span class="accent">wow factor</span><br>your team deserves.</h2>
+      <div class="divider"></div>
+      <div class="three-col" style="margin-top:28px;">
+        <div class="card">
+          <div class="card-icon">&#10024;</div>
+          <h4>UI Modernization</h4>
+          <p>A new design system built for industrial automation — precision, clarity, and visual confidence. Data-dense screens that are a pleasure to use.</p>
+          <span class="req-tag">D1</span>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#127760;</div>
+          <h4>Full i18n</h4>
+          <p>Every module localized. Your Tokyo team works in Japanese — dates, numbers, currencies, everything formatted correctly.</p>
+          <span class="req-tag">D2</span>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#9789;</div>
+          <h4>Dark Mode</h4>
+          <p>Operator-selectable theme for low-light warehouse environments. WCAG AA contrast, persistent preference, seamless switching.</p>
+          <span class="req-tag">D3</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Timeline -->
+  <div class="slide bg-white" data-slide="7">
+    <div class="logo-mark">Accenture</div>
+    <div class="slide-number">08 / 12</div>
+    <div class="content-full">
+      <h3>Delivery Timeline</h3>
+      <h2>Eight weeks. Four milestones. Zero surprises.</h2>
+      <div class="divider"></div>
+      <div class="timeline">
+        <div class="timeline-row">
+          <div class="timeline-phase">Weeks 1–2</div>
+          <div class="timeline-content">
+            <h4>Onboarding & Architecture</h4>
+            <p>Codebase analysis, architecture documentation (R4), test framework setup, defect register.</p>
+            <div class="timeline-bar"><span class="filled"></span><span class="filled"></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          </div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-phase">Weeks 3–4</div>
+          <div class="timeline-content">
+            <h4>Reports Remediation</h4>
+            <p>All defects resolved (R1), E2E tests for Reports + existing flows (R3 partial).</p>
+            <div class="timeline-bar"><span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span><span></span><span></span><span></span></div>
+          </div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-phase">Weeks 5–7</div>
+          <div class="timeline-content">
+            <h4>Restocking Feature</h4>
+            <p>Full restocking view + recommendation engine (R2), complete test suite (R3), operator feedback loop.</p>
+            <div class="timeline-bar"><span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span></div>
+          </div>
+        </div>
+        <div class="timeline-row">
+          <div class="timeline-phase">Week 8</div>
+          <div class="timeline-content">
+            <h4>Enhancements & Handoff</h4>
+            <p>UI refresh (D1), i18n (D2), dark mode (D3), final documentation, knowledge transfer.</p>
+            <div class="timeline-bar"><span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="filled"></span><span class="filled"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Experience -->
+  <div class="slide bg-deep" data-slide="8">
+    <div class="geo-lines"></div>
+    <div class="geo-circle" style="width:400px;height:400px;bottom:-120px;left:-80px;"></div>
+    <div class="logo-mark" style="color:#fff;">Accenture</div>
+    <div class="slide-number">09 / 12</div>
+    <div class="content-full">
+      <h3>Track Record</h3>
+      <h2>We've done this before.</h2>
+      <div class="divider"></div>
+      <div class="three-col" style="margin-top:28px;">
+        <div class="card">
+          <h4 style="margin-bottom:12px;">Warehouse Analytics Remediation</h4>
+          <p style="margin-bottom:16px;">Industrial parts distributor, 5 warehouses. Inherited abandoned vendor project, resolved 20+ defects, delivered 85% E2E coverage.</p>
+          <div style="display:flex;gap:16px;">
+            <div><div class="stat-value" style="font-size:1.8rem;">20+</div><div class="stat-label" style="font-size:0.7rem;">Bugs fixed</div></div>
+            <div><div class="stat-value" style="font-size:1.8rem;">85%</div><div class="stat-label" style="font-size:0.7rem;">Test coverage</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="margin-bottom:12px;">Demand Forecasting Dashboard</h4>
+          <p style="margin-bottom:16px;">EU electronics distributor, 3 warehouses. Built restocking engine with budget constraints and multi-language UI (EN/DE/FR).</p>
+          <div style="display:flex;gap:16px;">
+            <div><div class="stat-value" style="font-size:1.8rem;">-18%</div><div class="stat-label" style="font-size:0.7rem;">Overstock</div></div>
+            <div><div class="stat-value" style="font-size:1.8rem;">60%</div><div class="stat-label" style="font-size:0.7rem;">Faster decisions</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="margin-bottom:12px;">Legacy Dashboard Modernization</h4>
+          <p style="margin-bottom:16px;">US manufacturing supply chain. Complete UI overhaul with design system, dark mode, and responsive layouts for warehouse tablets.</p>
+          <div style="display:flex;gap:16px;">
+            <div><div class="stat-value" style="font-size:1.8rem;">4.6</div><div class="stat-label" style="font-size:0.7rem;">User rating</div></div>
+            <div><div class="stat-value" style="font-size:1.8rem;">0</div><div class="stat-label" style="font-size:0.7rem;">Regressions</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Pricing -->
+  <div class="slide bg-white" data-slide="9">
+    <div class="logo-mark">Accenture</div>
+    <div class="slide-number">10 / 12</div>
+    <div class="content-full">
+      <h3>Investment</h3>
+      <h2>Transparent pricing.<br>Predictable delivery.</h2>
+      <div class="divider"></div>
+      <div class="two-col" style="margin-top:24px;">
+        <div>
+          <div class="card" style="text-align:center;padding:40px;">
+            <div style="font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;opacity:0.5;margin-bottom:12px;">Not-to-Exceed</div>
+            <div class="stat-value" style="font-size:3.6rem;">$140K</div>
+            <div style="font-size:0.9rem;opacity:0.6;margin-top:12px;">Time & Materials — billed on actual hours only</div>
+          </div>
+          <div style="margin-top:20px;display:flex;gap:12px;">
+            <div class="card" style="flex:1;text-align:center;padding:20px;">
+              <div class="stat-value" style="font-size:1.6rem;">8</div>
+              <div class="stat-label" style="font-size:0.7rem;">Weeks</div>
+            </div>
+            <div class="card" style="flex:1;text-align:center;padding:20px;">
+              <div class="stat-value" style="font-size:1.6rem;">2</div>
+              <div class="stat-label" style="font-size:0.7rem;">Engineers</div>
+            </div>
+            <div class="card" style="flex:1;text-align:center;padding:20px;">
+              <div class="stat-value" style="font-size:1.6rem;">640</div>
+              <div class="stat-label" style="font-size:0.7rem;">Hours</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="height:100%;">
+            <h4 style="margin-bottom:16px;color:var(--accent);">What's Included</h4>
+            <ul class="check-list">
+              <li>All required deliverables (R1–R4)</li>
+              <li>All desired enhancements (D1–D3)</li>
+              <li>Weekly progress reports</li>
+              <li>Milestone reviews at each phase</li>
+              <li>Complete architecture documentation</li>
+              <li>Full E2E test suite</li>
+              <li>Knowledge transfer session</li>
+              <li>2 weeks post-engagement support</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: Why Us -->
+  <div class="slide bg-accent" data-slide="10">
+    <div class="geo-circle" style="width:600px;height:600px;top:-200px;right:-150px;"></div>
+    <div class="logo-mark" style="color:#fff;">Accenture</div>
+    <div class="slide-number">11 / 12</div>
+    <div class="content-center">
+      <h3 style="opacity:0.7;">Why Us</h3>
+      <h2 style="font-size:2.8rem;max-width:800px;">We don't just write code.<br>We finish what others started.</h2>
+      <div class="divider" style="background:#fff;margin:24px auto;"></div>
+      <div class="four-col" style="margin-top:28px;">
+        <div class="stat">
+          <div class="stat-value" style="color:#fff;">100%</div>
+          <div class="stat-label" style="color:rgba(255,255,255,0.7);">Inherited projects<br>delivered on time</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="color:#fff;">3</div>
+          <div class="stat-label" style="color:rgba(255,255,255,0.7);">Comparable<br>engagements</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="color:#fff;">0</div>
+          <div class="stat-label" style="color:rgba(255,255,255,0.7);">Regressions<br>on delivery</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" style="color:#fff;">2 wk</div>
+          <div class="stat-label" style="color:rgba(255,255,255,0.7);">Post-delivery<br>support included</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: Close -->
+  <div class="slide bg-dark" data-slide="11">
+    <div class="geo-lines"></div>
+    <div class="geo-circle" style="width:500px;height:500px;bottom:-150px;right:-100px;"></div>
+    <div class="content-center">
+      <h3>Let's Build Together</h3>
+      <h1>Ready when<br><span class="accent">you are.</span></h1>
+      <div class="divider" style="margin:24px auto;"></div>
+      <p class="subtitle" style="max-width:500px;">We'd welcome the opportunity to discuss our approach and answer any questions the Meridian team may have.</p>
+      <div style="margin-top:48px;padding:24px 40px;border:1px solid rgba(255,255,255,0.15);border-radius:12px;text-align:center;">
+        <p style="font-size:0.9rem;opacity:0.5;margin-bottom:8px;">Accenture</p>
+        <p style="font-size:1.05rem;opacity:0.8;">contact@accenture.com</p>
+      </div>
+      <p style="margin-top:40px;font-size:0.8rem;opacity:0.3;">RFP # MC-2026-0417 &mdash; Confidential</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Navigation -->
+<div class="keys-hint">Arrow keys or click to navigate</div>
+<div class="nav">
+  <button class="nav-btn" id="prev" aria-label="Previous slide">&#8592;</button>
+  <div class="nav-dots" id="dots"></div>
+  <button class="nav-btn" id="next" aria-label="Next slide">&#8594;</button>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const dots = document.getElementById('dots');
+  const progress = document.getElementById('progress');
+  let current = 0;
+
+  // Create dots
+  slides.forEach((_, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => goTo(i));
+    dots.appendChild(dot);
+  });
+
+  function goTo(n) {
+    if (n < 0 || n >= slides.length || n === current) return;
+    const forward = n > current;
+
+    // Hide current slide
+    slides[current].classList.remove('active');
+    if (forward) {
+      slides[current].classList.add('exit-left');
+    }
+
+    current = n;
+
+    // Show target slide
+    slides.forEach((s, i) => {
+      if (i !== current) {
+        s.classList.remove('active', 'exit-left');
+      }
+    });
+
+    const target = slides[current];
+    target.classList.remove('exit-left');
+    target.style.transform = forward ? 'translateX(60px)' : 'translateX(-60px)';
+    requestAnimationFrame(() => {
+      target.classList.add('active');
+      target.style.transform = '';
+    });
+
+    // Update dots
+    document.querySelectorAll('.nav-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+
+    // Update progress
+    progress.style.width = ((current / (slides.length - 1)) * 100) + '%';
+  }
+
+  document.getElementById('prev').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('next').addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); goTo(current - 1); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(slides.length - 1); }
+  });
+
+  // Touch support
+  let touchStart = 0;
+  document.addEventListener('touchstart', (e) => { touchStart = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStart - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) { diff > 0 ? goTo(current + 1) : goTo(current - 1); }
+  });
+})();
+</script>
+
+</body>
+</html>

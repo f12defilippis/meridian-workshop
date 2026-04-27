@@ -6,6 +6,8 @@ export default {
     orders: 'Orders',
     finance: 'Finance',
     demandForecast: 'Demand Forecast',
+    reports: 'Reports',
+    restocking: 'Restocking',
     companyName: 'Catalyst Components',
     subtitle: 'Inventory Management System'
   },
@@ -185,6 +187,72 @@ export default {
       change: 'Change',
       trend: 'Trend',
       period: 'Period'
+    }
+  },
+
+  // Reports
+  reports: {
+    title: 'Performance Reports',
+    description: 'View quarterly performance metrics and monthly trends',
+    loading: 'Loading reports...',
+    quarterlyPerformance: 'Quarterly Performance',
+    monthlyRevenueTrend: 'Monthly Revenue Trend',
+    monthOverMonth: 'Month-over-Month Analysis',
+    totalRevenueYTD: 'Total Revenue (YTD)',
+    avgMonthlyRevenue: 'Avg Monthly Revenue',
+    totalOrdersYTD: 'Total Orders (YTD)',
+    bestPerformingQuarter: 'Best Performing Quarter',
+    table: {
+      quarter: 'Quarter',
+      totalOrders: 'Total Orders',
+      totalRevenue: 'Total Revenue',
+      avgOrderValue: 'Avg Order Value',
+      fulfillmentRate: 'Fulfillment Rate',
+      month: 'Month',
+      orders: 'Orders',
+      revenue: 'Revenue',
+      change: 'Change',
+      growthRate: 'Growth Rate'
+    }
+  },
+
+  // Backlog
+  backlog: {
+    title: 'Backlog Management',
+    description: 'Track and resolve inventory shortages',
+    totalItems: 'Total Backlog Items',
+    itemsTitle: 'Backlog Items',
+    noItems: 'No backlog items - all orders can be fulfilled!'
+  },
+
+  // Restocking
+  restocking: {
+    title: 'Restocking Recommendations',
+    description: 'Generate purchase order recommendations based on demand forecasts and budget',
+    budgetLabel: 'Budget Ceiling',
+    budgetPlaceholder: 'Enter budget...',
+    generate: 'Generate',
+    totalBudget: 'Total Budget',
+    recommendedCost: 'Recommended Cost',
+    budgetRemaining: 'Budget Remaining',
+    itemsToOrder: 'Items to Order',
+    funded: 'Funded',
+    overBudget: 'Over Budget',
+    noRecommendations: 'All items are adequately stocked. No restocking needed.',
+    table: {
+      priority: 'Priority',
+      sku: 'SKU',
+      name: 'Item Name',
+      category: 'Category',
+      warehouse: 'Warehouse',
+      currentStock: 'Current Stock',
+      forecastedDemand: 'Forecasted Demand',
+      deficit: 'Deficit',
+      trend: 'Trend',
+      recommendedQty: 'Rec. Qty',
+      unitCost: 'Unit Cost',
+      estimatedCost: 'Est. Cost',
+      status: 'Status'
     }
   },
 

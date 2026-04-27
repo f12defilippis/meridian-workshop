@@ -6,6 +6,8 @@ export default {
     orders: '注文',
     finance: '財務',
     demandForecast: '需要予測',
+    reports: 'レポート',
+    restocking: '補充',
     companyName: '触媒コンポーネンツ',
     subtitle: '在庫管理システム'
   },
@@ -185,6 +187,72 @@ export default {
       change: '変化',
       trend: 'トレンド',
       period: '期間'
+    }
+  },
+
+  // Reports
+  reports: {
+    title: 'パフォーマンスレポート',
+    description: '四半期の業績指標と月次トレンドを表示',
+    loading: 'レポートを読み込み中...',
+    quarterlyPerformance: '四半期業績',
+    monthlyRevenueTrend: '月次収益トレンド',
+    monthOverMonth: '前月比分析',
+    totalRevenueYTD: '総収益（年初来）',
+    avgMonthlyRevenue: '平均月次収益',
+    totalOrdersYTD: '総注文数（年初来）',
+    bestPerformingQuarter: '最高業績四半期',
+    table: {
+      quarter: '四半期',
+      totalOrders: '総注文数',
+      totalRevenue: '総収益',
+      avgOrderValue: '平均注文額',
+      fulfillmentRate: '履行率',
+      month: '月',
+      orders: '注文数',
+      revenue: '収益',
+      change: '変動',
+      growthRate: '成長率'
+    }
+  },
+
+  // Backlog
+  backlog: {
+    title: 'バックログ管理',
+    description: '在庫不足の追跡と解決',
+    totalItems: 'バックログ品目合計',
+    itemsTitle: 'バックログ品目',
+    noItems: 'バックログ品目なし — 全注文の履行が可能です！'
+  },
+
+  // Restocking
+  restocking: {
+    title: '補充推奨',
+    description: '需要予測と予算に基づいて発注推奨を生成',
+    budgetLabel: '予算上限',
+    budgetPlaceholder: '予算を入力...',
+    generate: '生成',
+    totalBudget: '総予算',
+    recommendedCost: '推奨コスト',
+    budgetRemaining: '残余予算',
+    itemsToOrder: '発注品目数',
+    funded: '予算内',
+    overBudget: '予算超過',
+    noRecommendations: '全品目の在庫は十分です。補充の必要はありません。',
+    table: {
+      priority: '優先度',
+      sku: 'SKU',
+      name: '品目名',
+      category: 'カテゴリ',
+      warehouse: '倉庫',
+      currentStock: '現在庫',
+      forecastedDemand: '需要予測',
+      deficit: '不足数',
+      trend: 'トレンド',
+      recommendedQty: '推奨数量',
+      unitCost: '単価',
+      estimatedCost: '見積コスト',
+      status: 'ステータス'
     }
   },
 

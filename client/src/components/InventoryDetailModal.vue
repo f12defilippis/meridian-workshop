@@ -447,4 +447,31 @@ const getSummaryCardClass = () => {
 .modal-leave-to .modal-container {
   transform: scale(0.95);
 }
+
+/* Dark mode */
+[data-theme="dark"] .modal-overlay { background: rgba(0,0,0,0.7); }
+[data-theme="dark"] .modal-container { background: #1e293b; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+[data-theme="dark"] .modal-header { border-bottom-color: #334155; }
+[data-theme="dark"] .modal-title { color: #f1f5f9; }
+[data-theme="dark"] .close-button { color: #94a3b8; }
+[data-theme="dark"] .close-button:hover { background: #334155; color: #f1f5f9; }
+[data-theme="dark"] .item-header { border-bottom-color: #334155; }
+[data-theme="dark"] .item-name { color: #f1f5f9; }
+[data-theme="dark"] .item-sku { color: #94a3b8; }
+[data-theme="dark"] .summary-card.primary { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.3); }
+[data-theme="dark"] .summary-card.success-card { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); }
+[data-theme="dark"] .summary-card.warning-card { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); }
+[data-theme="dark"] .summary-card.danger-card { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); }
+[data-theme="dark"] .summary-label { color: #94a3b8; }
+[data-theme="dark"] .summary-value { color: #f1f5f9; }
+[data-theme="dark"] .summary-subtitle { color: #64748b; }
+[data-theme="dark"] .info-label { color: #94a3b8; }
+[data-theme="dark"] .info-value { color: #e2e8f0; }
+[data-theme="dark"] .info-value.total-value { color: #38bdf8; }
+[data-theme="dark"] .modal-footer { border-top-color: #334155; }
+[data-theme="dark"] .btn-secondary { background: #334155; border-color: #475569; color: #e2e8f0; }
+[data-theme="dark"] .btn-secondary:hover { background: #475569; border-color: #64748b; }
+[data-theme="dark"] .stock-badge.success { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+[data-theme="dark"] .stock-badge.warning { background: rgba(245,158,11,0.15); color: #fcd34d; }
+[data-theme="dark"] .stock-badge.danger { background: rgba(239,68,68,0.15); color: #fca5a5; }
 </style>

@@ -278,4 +278,21 @@ const handleLogout = () => {
   min-width: 20px;
   text-align: center;
 }
+
+/* Dark mode */
+[data-theme="dark"] .profile-button { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); }
+[data-theme="dark"] .profile-button:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.25); }
+[data-theme="dark"] .profile-name { color: #e2e8f0; }
+[data-theme="dark"] .chevron { color: #94a3b8; }
+[data-theme="dark"] .dropdown-menu { background: #1e293b; border-color: #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+[data-theme="dark"] .dropdown-header { background: #0f172a; }
+[data-theme="dark"] .user-name { color: #f1f5f9; }
+[data-theme="dark"] .user-email { color: #94a3b8; }
+[data-theme="dark"] .dropdown-divider { background: #334155; }
+[data-theme="dark"] .dropdown-item { color: #e2e8f0; }
+[data-theme="dark"] .dropdown-item:hover { background: #334155; }
+[data-theme="dark"] .dropdown-item svg { color: #94a3b8; }
+[data-theme="dark"] .dropdown-item.logout { color: #f87171; }
+[data-theme="dark"] .dropdown-item.logout svg { color: #f87171; }
+[data-theme="dark"] .dropdown-item.logout:hover { background: rgba(239,68,68,0.1); }
 </style>

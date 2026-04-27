@@ -336,4 +336,13 @@ export default {
 .clickable-row:hover {
   background: #eff6ff !important;
 }
+
+/* Dark mode */
+[data-theme="dark"] .card-header { border-bottom-color: #334155; }
+[data-theme="dark"] .card-title { color: #f1f5f9; }
+[data-theme="dark"] .search-input { background: #0f172a; color: #e2e8f0; border-color: #334155; }
+[data-theme="dark"] .search-input:focus { background: #1e293b; border-color: #0d9488; box-shadow: 0 0 0 3px rgba(13,148,136,0.15); }
+[data-theme="dark"] .search-input::placeholder { color: #64748b; }
+[data-theme="dark"] .clear-search:hover { background: #334155; color: #94a3b8; }
+[data-theme="dark"] .clickable-row:hover { background: rgba(13,148,136,0.15) !important; }
 </style>
